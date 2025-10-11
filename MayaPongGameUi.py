@@ -20,9 +20,29 @@ class PongGame(QtWidgets.QDialog):
 		self.setWindowTitle("🏓 Maya Pong Game")
 		self.setFixedSize(300, 150)
 
+		self.setStyleSheet("""
+			QDialog {
+				background-color: #ff8a65;
+			}
+			QPushButton {
+				background-color: #ab47bc;
+				color: white;
+				border-radius: 6px;
+				padding: 5px 10px;
+				font-weight: bold;
+			}
+			QPushButton:hover {
+				background-color: #ba68c8;
+			}
+			QPushButton:pressed {
+				background-color: #8e24aa;
+			}
+		""")
+
 		self.layout = QtWidgets.QVBoxLayout(self)
 
 		self.info_label = QtWidgets.QLabel("🎮 Hold left/right to move paddle 🎮")
+		self.info_label.setStyleSheet("color: #000000;")
 		self.layout.addWidget(self.info_label)
 
 		move_layout = QtWidgets.QHBoxLayout()
@@ -32,10 +52,11 @@ class PongGame(QtWidgets.QDialog):
 		move_layout.addWidget(self.right_btn)
 		self.layout.addLayout(move_layout)
 
-		self.start_btn = QtWidgets.QPushButton("🚀 Start Game 🚀")
+		self.start_btn = QtWidgets.QPushButton("🏓 Start Game 🏓")
 		self.layout.addWidget(self.start_btn)
 
 		self.status_label = QtWidgets.QLabel("")
+		self.status_label.setStyleSheet("color: #000000;")
 		self.layout.addWidget(self.status_label)
 
 		self.start_btn.clicked.connect(self.start_game)
@@ -45,20 +66,16 @@ class PongGame(QtWidgets.QDialog):
 		self.right_timer = QtCore.QTimer()
 		self.right_timer.timeout.connect(lambda: self.move_paddle(0.3))
 
-
 		self.left_btn.pressed.connect(self.left_timer.start)
 		self.left_btn.released.connect(self.left_timer.stop)
 		self.right_btn.pressed.connect(self.right_timer.start)
 		self.right_btn.released.connect(self.right_timer.stop)
 
-
 		self.left_timer.setInterval(30)
 		self.right_timer.setInterval(30)
 
-
 		self.ball_timer = QtCore.QTimer()
 		self.ball_timer.timeout.connect(self.update_ball)
-
 
 		self.paddle = None
 		self.ball = None
@@ -71,14 +88,11 @@ class PongGame(QtWidgets.QDialog):
 		except:
 			pass
 
-
 		self.paddle = cmds.polyCube(w=2, h=0.5, d=0.5, name="paddle")[0]
 		cmds.move(0, 0, -5, self.paddle)
 
-
 		self.ball = cmds.polySphere(r=0.3, name="ball")[0]
 		cmds.move(0, 0, 0, self.ball)
-
 
 		cmds.polyCube(w=12, h=1, d=0.5, name="topWall")
 		cmds.move(0, 0, 6)
@@ -93,7 +107,7 @@ class PongGame(QtWidgets.QDialog):
 		self.reset_scene()
 		self.ball_dir = [random.choice([-0.2, 0.2]), 0, 0.2]
 		self.ball_timer.start(30)
-		self.status_label.setText("🟢 Game started!")
+		self.status_label.setText("🟢 Game started !")
 
 	def move_paddle(self, amount):
 		if not self.paddle:
@@ -124,7 +138,7 @@ class PongGame(QtWidgets.QDialog):
 
 		if new_pos[2] <= -5.5:
 			self.ball_timer.stop()
-			self.status_label.setText("💀 Game Over!")
+			self.status_label.setText("💀 Game Over !")
 			return
 
 		paddle_pos = cmds.xform(self.paddle, q=True, t=True, ws=True)
@@ -145,6 +159,5 @@ def run_pong_game():
 
 	pong_game_ui = PongGame()
 	pong_game_ui.show()
-
 
 run_pong_game()
